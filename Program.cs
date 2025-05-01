@@ -88,3 +88,89 @@ class Programa
         }
     }
 }
+
+class pocion : Personaje
+{
+
+    public int VidaMaxima { get; set; }
+    public int ManaMaximo { get; set; }
+
+    public pocion (string color, int vida, int defensa, int fuerza, int mana)
+    {
+        color = Color;
+        vida = Vida;
+        defensa = Defensa;
+        fuerza = Fuerza;
+        mana = Mana;
+        VidaMaxima = Vida;
+        ManaMaximo = Mana;
+    }
+
+    public void CambiarColor(string nuevoColor)
+    {
+        Color = nuevoColor;
+    }
+
+    public bool RecibirDaño(int daño)
+    {
+        int dañoFinal = daño - Defensa;
+        if (dañoFinal < 0) dañoFinal = 0;
+        Vida -= dañoFinal;
+        if (Vida < 0) Vida = 0;
+        return Vida > 0;
+    }
+
+    public bool Atacar(Personaje enemigo)
+    {
+        return enemigo.RecibirDaño(Fuerza);
+    }
+
+    public void CurarVida(int cantidad)
+    {
+        Vida += cantidad;
+        if (Vida > VidaMaxima)
+            Vida = VidaMaxima;
+    }
+    public void CurarMana(int cantidad)
+    {
+        Mana += cantidad;
+        if (Mana > ManaMaximo)
+            Mana = ManaMaximo;
+    }
+    public void Mostrar()
+    {
+        Console.WriteLine($"Color: {Color}, Vida: {Vida}/{VidaMaxima}, Defensa: {Defensa}, Fuerza: {Fuerza}, Mana: {Mana}/{ManaMaximo}");
+    }
+
+}
+
+abstract class Pocion
+{
+    public int Minimo { get; set; }
+    public int Maximo { get; set; }
+
+    protected Random rnd = new Random();
+
+    public Pocion(int minimo, int maximo)
+    {
+        Minimo = minimo;
+        Maximo = maximo;
+    }
+    public abstract void Usar(Personaje personaje);
+    class PocionVida : Pocion
+    {
+        public PocionVida(int min, int max) : base(min, max) { }
+
+        public void Usar(Personaje personaje)
+        {
+            int cantidad = rnd.Next(Minimo, Maximo + 1);
+            personaje.CurarVida(cantidad);
+            Console.WriteLine($"Se curo {cantidad} puntos de vida");
+        }
+
+        public override void Usar(Personaje personaje)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
